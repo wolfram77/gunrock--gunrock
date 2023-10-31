@@ -18,7 +18,7 @@ mkdir build && cd build
 cmake ..
 make -j32
 
-perform() {
+perform-all() {
 cmd=$1
 ext=$2
 stdbuf --output=L $cmd ~/Data/indochina-2004$ext  2>&1 | tee -a "$out"
@@ -37,4 +37,8 @@ stdbuf --output=L $cmd ~/Data/kmer_V1r$ext        2>&1 | tee -a "$out"
 }
 
 # Run PageRank on MTX
-perform $bin ".mtx"
+perform-all $bin ".mtx"
+perform-all $bin ".mtx"
+perform-all $bin ".mtx"
+perform-all $bin ".mtx"
+perform-all $bin ".mtx"
