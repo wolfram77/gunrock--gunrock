@@ -36,11 +36,5 @@ stdbuf --output=L $cmd ~/Data/kmer_A2a$ext        2>&1 | tee -a "$out"
 stdbuf --output=L $cmd ~/Data/kmer_V1r$ext        2>&1 | tee -a "$out"
 }
 
-# Convert MTX to CSR
-perform $csr ".mtx"
-
 # Run PageRank on MTX
 perform $bin ".mtx"
-
-# Run PageRank on CSR
-perform $bin ".mtx.csr"
