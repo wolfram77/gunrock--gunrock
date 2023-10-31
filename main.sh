@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 src="gunrock--gunrock"
-bin="bin/pr"
 out="$HOME/Logs/$src.log"
+csr="bin/csr_binary"
+bin="bin/pr"
 ulimit -s unlimited
 printf "" > "$out"
 
@@ -16,16 +17,30 @@ cd $src
 mkdir build && cd build
 cmake ..
 make -j32
-stdbuf --output=L $bin ~/Data/indochina-2004.mtx  2>&1 | tee -a "$out"
-stdbuf --output=L $bin ~/Data/uk-2002.mtx         2>&1 | tee -a "$out"
-stdbuf --output=L $bin ~/Data/arabic-2005.mtx     2>&1 | tee -a "$out"
-stdbuf --output=L $bin ~/Data/uk-2005.mtx         2>&1 | tee -a "$out"
-stdbuf --output=L $bin ~/Data/webbase-2001.mtx    2>&1 | tee -a "$out"
-stdbuf --output=L $bin ~/Data/it-2004.mtx         2>&1 | tee -a "$out"
-stdbuf --output=L $bin ~/Data/sk-2005.mtx         2>&1 | tee -a "$out"
-stdbuf --output=L $bin ~/Data/com-LiveJournal.mtx 2>&1 | tee -a "$out"
-stdbuf --output=L $bin ~/Data/com-Orkut.mtx       2>&1 | tee -a "$out"
-stdbuf --output=L $bin ~/Data/asia_osm.mtx        2>&1 | tee -a "$out"
-stdbuf --output=L $bin ~/Data/europe_osm.mtx      2>&1 | tee -a "$out"
-stdbuf --output=L $bin ~/Data/kmer_A2a.mtx        2>&1 | tee -a "$out"
-stdbuf --output=L $bin ~/Data/kmer_V1r.mtx        2>&1 | tee -a "$out"
+
+perform() {
+cmd=$1
+ext=$2
+stdbuf --output=L $cmd ~/Data/indochina-2004$ext  2>&1 | tee -a "$out"
+stdbuf --output=L $cmd ~/Data/uk-2002$ext         2>&1 | tee -a "$out"
+stdbuf --output=L $cmd ~/Data/arabic-2005$ext     2>&1 | tee -a "$out"
+stdbuf --output=L $cmd ~/Data/uk-2005$ext         2>&1 | tee -a "$out"
+stdbuf --output=L $cmd ~/Data/webbase-2001$ext    2>&1 | tee -a "$out"
+stdbuf --output=L $cmd ~/Data/it-2004$ext         2>&1 | tee -a "$out"
+stdbuf --output=L $cmd ~/Data/sk-2005$ext         2>&1 | tee -a "$out"
+stdbuf --output=L $cmd ~/Data/com-LiveJournal$ext 2>&1 | tee -a "$out"
+stdbuf --output=L $cmd ~/Data/com-Orkut$ext       2>&1 | tee -a "$out"
+stdbuf --output=L $cmd ~/Data/asia_osm$ext        2>&1 | tee -a "$out"
+stdbuf --output=L $cmd ~/Data/europe_osm$ext      2>&1 | tee -a "$out"
+stdbuf --output=L $cmd ~/Data/kmer_A2a$ext        2>&1 | tee -a "$out"
+stdbuf --output=L $cmd ~/Data/kmer_V1r$ext        2>&1 | tee -a "$out"
+}
+
+# Convert MTX to CSR
+perform $csr ".mtx"
+
+# Run PageRank on MTX
+perform $bin ".mtx"
+
+# Run PageRank on CSR
+perform $bin ".mtx.csr"

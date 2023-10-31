@@ -53,12 +53,12 @@ void test_pr(int num_arguments, char** argument_array) {
   auto t2 = std::chrono::high_resolution_clock::now();
 
   // Print graph loading time
-  std::cout << "graph loading time : "
+  std::cout << "graph loading time = "
     << std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count()
-    << "ms\n";
-  std::cout << "graph building time : "
+    << " (ms)\n";
+  std::cout << "graph building time = "
     << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count()
-    << "ms\n";
+    << " (ms)\n";
 
   // --
   // Params and memory allocation

@@ -33,7 +33,7 @@ void mtx2bin(int num_arguments, char** argument_array) {
   auto t1 = std::chrono::high_resolution_clock::now();
   std::cout << "graph loading time = "
     << std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count()
-    << "ms\n";
+    << " (ms)\n";
 
   std::cout << "csr.number_of_rows     = " << csr.number_of_rows << std::endl;
   std::cout << "csr.number_of_columns  = " << csr.number_of_columns
@@ -47,7 +47,7 @@ void mtx2bin(int num_arguments, char** argument_array) {
   auto t3 = std::chrono::high_resolution_clock::now();
   std::cout << "graph writing time = "
     << std::chrono::duration_cast<std::chrono::milliseconds>(t3 - t2).count()
-    << "ms\n";
+    << " (ms)\n";
 }
 
 int main(int argc, char** argv) {
