@@ -1,4 +1,5 @@
 #include <gunrock/algorithms/pr.hxx>
+#include <chrono>
 
 using namespace gunrock;
 using namespace memory;
@@ -25,6 +26,8 @@ void test_pr(int num_arguments, char** argument_array) {
 
   std::string filename = argument_array[1];
 
+  // Measure loading time using high_resolution_clock
+  auto t0 = std::chrono::high_resolution_clock::now();
   if (util::is_market(filename)) {
     io::matrix_market_t<vertex_t, edge_t, weight_t> mm;
     csr.from_coo(mm.load(filename));
@@ -34,6 +37,7 @@ void test_pr(int num_arguments, char** argument_array) {
     std::cerr << "Unknown file format: " << filename << std::endl;
     exit(1);
   }
+  auto t1 = std::chrono::high_resolution_clock::now();
 
   // --
   // Build graph
@@ -46,6 +50,15 @@ void test_pr(int num_arguments, char** argument_array) {
       csr.column_indices.data().get(),  // column_indices
       csr.nonzero_values.data().get()   // values
   );  // supports row_indices and column_offsets (default = nullptr)
+  auto t2 = std::chrono::high_resolution_clock::now();
+
+  // Print graph loading time
+  std::cout << "Graph load time : "
+    << std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count()
+    << " (ms)" << std::endl;
+  std::cout << "Graph build time : "
+    << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count()
+    << " (ms)" << std::endl;
 
   // --
   // Params and memory allocation
