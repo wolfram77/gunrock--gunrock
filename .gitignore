@@ -1,3 +1,7 @@
+# Ignore logs and CSV
+*.log
+*.csv
+
 # Ignore vscode
 *.vscode*
 
