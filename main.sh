@@ -42,3 +42,6 @@ perform-all $bin ".mtx"
 perform-all $bin ".mtx"
 perform-all $bin ".mtx"
 perform-all $bin ".mtx"
+
+# Signal completion
+curl -X POST "https://maker.ifttt.com/trigger/puzzlef/with/key/${IFTTT_KEY}?value1=$src$1"
