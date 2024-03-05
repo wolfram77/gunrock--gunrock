@@ -1,3 +1,6 @@
+# Ignore output files
+*.log
+
 # Ignore vscode
 *.vscode*
 
