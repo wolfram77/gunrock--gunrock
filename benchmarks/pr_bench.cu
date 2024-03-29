@@ -106,6 +106,15 @@ void pr_bench(nvbench::state& state) {
   state.exec(nvbench::exec_tag::sync, [&](nvbench::launch& launch) {
     gunrock::pr::run(G, alpha, tol, p.data().get());
   });
+  // Write output to a file
+  printf("Writing output to file %s.ranks ...\n", filename.c_str());
+  std::ofstream outs(filename + ".ranks");
+  vector<weight_t> p_h(n_vertices);
+  p_h = p;
+  for (int i = 0; i < n_vertices; i++)
+    outs << i << " " << p_h[i] << std::endl;
+  outs.close();
+  printf("Done!\n");
 }
 
 int main(int argc, char** argv) {
