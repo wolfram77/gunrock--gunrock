@@ -19,8 +19,7 @@ void test_matrix_market(int num_arguments, char** argument_array) {
   auto coo = mm.load(filename);
   for (int i = 0; i < coo.number_of_nonzeros; ++i) {
     std::cout << "(" << coo.row_indices[i] << ", " << coo.column_indices[i]
-              << ")"
-              << " = " << coo.nonzero_values[i] << std::endl;
+              << ")" << " = " << coo.nonzero_values[i] << std::endl;
   }
 }
 
