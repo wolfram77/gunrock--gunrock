@@ -113,13 +113,13 @@ struct enactor_t : gunrock::enactor_t<problem_t> {
       return (iteration + 1 < old_distance);
     };
 
-    auto remove_invalids =
-        [] __host__ __device__(vertex_t const& vertex) -> bool {
-      // Returning true here means that we keep all the valid vertices.
-      // Internally, filter will automatically remove invalids and will never
-      // pass them to this lambda function.
-      return true;
-    };
+    auto remove_invalids = [] __host__ __device__(vertex_t const& vertex)
+        -> bool {
+          // Returning true here means that we keep all the valid vertices.
+          // Internally, filter will automatically remove invalids and will
+          // never pass them to this lambda function.
+          return true;
+        };
 
     // Execute advance operator on the provided lambda
     operators::advance::execute<operators::load_balance_t::block_mapped>(

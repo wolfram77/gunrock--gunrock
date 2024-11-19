@@ -120,9 +120,8 @@ struct enactor_t : gunrock::enactor_t<problem_t> {
 
     // >> handle "dangling nodes" (nodes w/ zero outdegree)
     // could skip this if no nodes have sero outdegree
-    auto compute_dangling = [=] __host__ __device__(const int& i) -> weight_t {
-      return iweights[i] == 0 ? alpha * p[i] : 0;
-    };
+    auto compute_dangling = [=] __host__ __device__(const int& i)
+        -> weight_t { return iweights[i] == 0 ? alpha * p[i] : 0; };
 
     float dsum = thrust::transform_reduce(
         policy, thrust::counting_iterator<vertex_t>(0),
@@ -179,9 +178,8 @@ struct enactor_t : gunrock::enactor_t<problem_t> {
     auto p = P->result.p;
     auto plast = P->plast.data().get();
 
-    auto abs_diff = [=] __host__ __device__(const int& i) -> weight_t {
-      return abs(p[i] - plast[i]);
-    };
+    auto abs_diff = [=] __host__ __device__(const int& i)
+        -> weight_t { return abs(p[i] - plast[i]); };
 
     auto policy = this->context->get_context(0)->execution_policy();
     float err = thrust::transform_reduce(
