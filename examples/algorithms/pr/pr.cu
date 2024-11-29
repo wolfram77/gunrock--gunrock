@@ -22,8 +22,10 @@ void test_pr(int num_arguments, char** argument_array) {
   gunrock::io::cli::parameters_t params(num_arguments, argument_array,
                                         "Page Rank");
 
+  printf("Loading graph %s ...\n", params.filename.c_str());
   io::matrix_market_t<vertex_t, edge_t, weight_t> mm;
   auto [properties, coo] = mm.load(params.filename);
+  printf("order: %d, size: %d, symmetric: %d\n", coo.number_of_rows, coo.number_of_nonzeros, properties.symmetric);
 
   csr_t csr;
 
@@ -84,8 +86,9 @@ void test_pr(int num_arguments, char** argument_array) {
   }
 
   // Log
-
+  std::ofstream outfile(params.filename + ".ranks");
   print::head(p, 40, "GPU rank");
+  print::headStream(outfile, p, 40, "GPU rank");
 
   std::cout << "GPU Elapsed Time : " << run_times[params.num_runs - 1]
             << " (ms)" << std::endl;

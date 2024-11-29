@@ -66,5 +66,29 @@ void head(type_t* x, int k, int n, std::string name = "") {
   std::cout << std::endl;
 }
 
+/**
+ * @brief Print the first k elements of an array (device or host). Requires
+ * expensive copies, not intended to be performant.
+ *
+ * @tparam type_t type of the array.
+ * @param x pointer to be printed.
+ * @param k number of elements to be printed.
+ * @param n number of elements in the array.
+ */
+template <typename type_t>
+void headStream(std::ostream stream, type_t* x, int k, int n, std::string name = "") {
+  if (n < k)
+    k = n;
+
+  if (name.size() > 0)
+    stream << name << "[:" << k << "] = ";
+
+  thrust::device_vector<type_t> d_tmp(x, x + k);
+  thrust::host_vector<type_t> h_tmp = d_tmp;
+  thrust::copy(h_tmp.begin(), h_tmp.end(),
+               std::ostream_iterator<type_t>(stream, " "));
+  stream << std::endl;
+}
+
 }  // namespace print
 }  // namespace gunrock
