@@ -170,6 +170,8 @@ struct enactor_t : gunrock::enactor_t<problem_t> {
   virtual bool is_converged(gcuda::multi_context_t& context) {
     if (this->iteration == 0)
       return false;
+    if (this->iteration >= 500)
+      return true;
 
     auto P = this->get_problem();
     auto G = P->get_graph();

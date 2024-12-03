@@ -1,9 +1,35 @@
 #include <gunrock/algorithms/pr.hxx>
 #include <gunrock/util/performance.hxx>
 #include <gunrock/io/parameters.hxx>
+#include <cmath>
+#include <vector>
+#include <omp.h>
 
 using namespace gunrock;
 using namespace memory;
+
+
+
+
+/**
+ * Compute the L1-norm of the difference of two arrays in parallel.
+ * @param x an array
+ * @param y another array
+ * @param N size of arrays
+ * @param a initial value
+ * @returns ||x-y||_1
+ */
+template <class TX, class TY, class TA=TX>
+inline TA l1NormDeltaOmp(const TX *x, const TY *y, size_t N, TA a=TA()) {
+  // ASSERT(x && y);
+  #pragma omp parallel for schedule(auto) reduction(+:a)
+  for (size_t i=0; i<N; ++i)
+    a += TA(std::abs(x[i] - y[i]));
+  return a;
+}
+
+
+
 
 void test_pr(int num_arguments, char** argument_array) {
   // --
@@ -22,8 +48,10 @@ void test_pr(int num_arguments, char** argument_array) {
   gunrock::io::cli::parameters_t params(num_arguments, argument_array,
                                         "Page Rank");
 
+  printf("Loading graph %s ...\n", params.filename.c_str());
   io::matrix_market_t<vertex_t, edge_t, weight_t> mm;
   auto [properties, coo] = mm.load(params.filename);
+  printf("order: %d, size: %d, symmetric: %d\n", coo.number_of_rows, coo.number_of_nonzeros, properties.symmetric);
 
   csr_t csr;
 
@@ -44,7 +72,7 @@ void test_pr(int num_arguments, char** argument_array) {
   srand(time(NULL));
 
   weight_t alpha = 0.85;
-  weight_t tol = 1e-6;
+  weight_t tol = 1e-10;
 
   size_t n_vertices = G.get_number_of_vertices();
   size_t n_edges = G.get_number_of_edges();
@@ -58,7 +86,7 @@ void test_pr(int num_arguments, char** argument_array) {
   // GPU Run
 
   std::vector<float> run_times;
-
+  printf("Running PR ...\n");
   auto benchmark_metrics =
       std::vector<benchmark::host_benchmark_t>(params.num_runs);
   for (int i = 0; i < params.num_runs; i++) {
@@ -84,11 +112,24 @@ void test_pr(int num_arguments, char** argument_array) {
   }
 
   // Log
-
   print::head(p, 40, "GPU rank");
+
+  // Copy p to host
+  thrust::host_vector<weight_t> p_host = p;
+
+  // Run PR with zero tolerance to find exact PageRanks
+  printf("Running exact PR ...\n");
+  thrust::device_vector<weight_t> p_exact(n_vertices);
+  gunrock::pr::run(G, alpha, 0, p_exact.data().get());
+  thrust::host_vector<weight_t> p_exact_host = p_exact;
+
+  // Compute L1-norm of the difference between exact and approximate PageRanks
+  printf("Computing error ...\n");
+  weight_t l1_norm = l1NormDeltaOmp(p_host.data(), p_exact_host.data(), n_vertices);
 
   std::cout << "GPU Elapsed Time : " << run_times[params.num_runs - 1]
             << " (ms)" << std::endl;
+  std::cout << "GPU Error : " << l1_norm << std::endl;
 }
 
 int main(int argc, char** argv) {

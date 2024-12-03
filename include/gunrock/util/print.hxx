@@ -66,5 +66,27 @@ void head(type_t* x, int k, int n, std::string name = "") {
   std::cout << std::endl;
 }
 
+/**
+ * @brief Print the first k elements of a vector to a stream.
+ *
+ * @tparam vector_t
+ * @param stream stream to print to.
+ * @param x vector to print.
+ * @param k number of elements to print.
+ */
+template <typename vector_t>
+void headStream(std::ostream &stream, vector_t& x, int k, std::string name = "") {
+  using type_t = typename vector_t::value_type;
+  if (x.size() < k)
+    k = x.size();
+
+  if (name.size() > 0)
+    stream << name << "[:" << k << "] = ";
+
+  thrust::copy(x.begin(), x.begin() + k,
+               std::ostream_iterator<type_t>(stream, " "));
+  stream << std::endl;
+}
+
 }  // namespace print
 }  // namespace gunrock

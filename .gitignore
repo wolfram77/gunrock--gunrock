@@ -1,3 +1,7 @@
+# Ignore experimental files
+*.log
+*.csv
+
 # Ignore vscode
 *.vscode*
 
