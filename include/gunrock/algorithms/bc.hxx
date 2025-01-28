@@ -121,17 +121,17 @@ struct enactor_t : gunrock::enactor_t<problem_t> {
       // Run advance
       auto forward_op = [sigmas, labels] __host__ __device__(
                             vertex_t const& src, vertex_t const& dst,
-                            edge_t const& edge,
-                            weight_t const& weight) -> bool {
-        auto new_label = labels[src] + 1;
-        auto old_label = math::atomic::cas(labels + dst, -1, new_label);
+                            edge_t const& edge, weight_t const& weight)
+          -> bool {
+            auto new_label = labels[src] + 1;
+            auto old_label = math::atomic::cas(labels + dst, -1, new_label);
 
-        if ((old_label != -1) && (new_label != old_label))
-          return false;
+            if ((old_label != -1) && (new_label != old_label))
+              return false;
 
-        math::atomic::add(sigmas + dst, sigmas[src]);
-        return old_label == -1;
-      };
+            math::atomic::add(sigmas + dst, sigmas[src]);
+            return old_label == -1;
+          };
 
       while (true) {
         auto in_frontier = &(this->frontiers[this->depth]);

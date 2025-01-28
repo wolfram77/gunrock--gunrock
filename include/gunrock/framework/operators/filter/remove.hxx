@@ -20,9 +20,8 @@ void execute(graph_t& G,
   output->reserve(input->get_number_of_elements());
   output->set_number_of_elements(input->get_number_of_elements());
 
-  auto predicate = [=] __host__ __device__(type_t const& i) -> bool {
-    return gunrock::util::limits::is_valid(i) ? !op(i) : true;
-  };
+  auto predicate = [=] __host__ __device__(type_t const& i)
+      -> bool { return gunrock::util::limits::is_valid(i) ? !op(i) : true; };
 
   // Copy w/ predicate!
   auto new_length = thrust::remove_copy_if(

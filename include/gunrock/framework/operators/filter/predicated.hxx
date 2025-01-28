@@ -21,9 +21,8 @@ void execute(graph_t& G,
     output->reserve(input->get_number_of_elements());
   output->set_number_of_elements(input->get_number_of_elements());
 
-  auto predicate = [=] __host__ __device__(type_t const& i) -> bool {
-    return util::limits::is_valid(i) ? op(i) : false;
-  };
+  auto predicate = [=] __host__ __device__(type_t const& i)
+      -> bool { return util::limits::is_valid(i) ? op(i) : false; };
 
   // Copy w/ predicate!
   auto new_length =

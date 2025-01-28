@@ -66,9 +66,8 @@ struct problem_t : gunrock::problem_t<graph_t> {
     // set initial `degrees` values to be vertices' actual degree
     // will reduce these as vertices are removed from k-cores with increasing k
     // value
-    auto get_degree = [=] __host__ __device__(const int& i) -> int {
-      return g.get_number_of_neighbors(i);
-    };
+    auto get_degree = [=] __host__ __device__(const int& i)
+        -> int { return g.get_number_of_neighbors(i); };
 
     thrust::transform(policy, thrust::counting_iterator<vertex_t>(0),
                       thrust::counting_iterator<vertex_t>(n_vertices),
@@ -76,9 +75,8 @@ struct problem_t : gunrock::problem_t<graph_t> {
 
     // mark zero degree vertices as deleted
     auto degrees_data = degrees.data().get();
-    auto mark_zero_degrees = [=] __host__ __device__(const int& i) -> bool {
-      return (degrees_data[i] == 0) ? true : false;
-    };
+    auto mark_zero_degrees = [=] __host__ __device__(const int& i)
+        -> bool { return (degrees_data[i] == 0) ? true : false; };
 
     thrust::transform(policy, thrust::counting_iterator<vertex_t>(0),
                       thrust::counting_iterator<vertex_t>(n_vertices),
